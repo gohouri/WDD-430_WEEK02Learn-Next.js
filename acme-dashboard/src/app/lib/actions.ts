@@ -31,11 +31,21 @@ export async function createInvoice(prevState: string | undefined, formData: For
     };
   }
 
-  // Mock implementation for demo
-  console.log('Creating invoice:', validatedFields.data);
+  const { customerId, amount, status } = validatedFields.data;
+  
+  // Mock implementation for demo - in a real app, you'd save to database
+  console.log('Creating invoice:', {
+    customerId,
+    amount: `$${amount}`,
+    status,
+    date: new Date().toISOString().split('T')[0]
+  });
+  
+  // Simulate processing time
+  await new Promise(resolve => setTimeout(resolve, 1000));
   
   revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
+  redirect('/dashboard/invoices?success=true');
 }
 
 export async function updateInvoice(id: string, prevState: string | undefined, formData: FormData) {
