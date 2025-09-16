@@ -1,5 +1,9 @@
+import { Suspense } from 'react';
 import Card from '@/app/ui/dashboard/cards';
+import RevenueChart from '@/app/ui/dashboard/revenue-chart';
+import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
 import { lusitana } from '@/app/ui/fonts';
+import { LatestInvoicesSkeleton, RevenueChartSkeleton } from '@/app/ui/skeletons';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -8,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  // Mock data for demonstration
+  // Mock data for demo
   const numberOfInvoices = 12;
   const numberOfCustomers = 8;
   const totalPaidInvoices = '$52,920.00';
@@ -30,26 +34,12 @@ export default async function Page() {
         />
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-        <div className="w-full md:col-span-4">
-          <h2 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-            Recent Revenue
-          </h2>
-          <div className="rounded-xl bg-gray-50 p-4">
-            <div className="text-center text-gray-500">
-              Revenue chart would be displayed here
-            </div>
-          </div>
-        </div>
-        <div className="flex w-full flex-col md:col-span-4">
-          <h2 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-            Latest Invoices
-          </h2>
-          <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-            <div className="text-center text-gray-500">
-              Latest invoices would be displayed here
-            </div>
-          </div>
-        </div>
+        <Suspense fallback={<RevenueChartSkeleton />}>
+          <RevenueChart />
+        </Suspense>
+        <Suspense fallback={<LatestInvoicesSkeleton />}>
+          <LatestInvoices />
+        </Suspense>
       </div>
     </main>
   );

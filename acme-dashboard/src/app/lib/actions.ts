@@ -1,6 +1,7 @@
 'use server';
 
 import { z } from 'zod';
+import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -17,7 +18,7 @@ const FormSchema = z.object({
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
-export async function createInvoice(prevState: string | undefined, formData: FormData) {
+export async function createInvoice(formData: FormData) {
   const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
@@ -25,30 +26,29 @@ export async function createInvoice(prevState: string | undefined, formData: For
   });
 
   if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Create Invoice.',
-    };
+    console.error('Validation failed:', validatedFields.error.flatten().fieldErrors);
+    return;
   }
 
   const { customerId, amount, status } = validatedFields.data;
-  
-  // Mock implementation for demo - in a real app, you'd save to database
-  console.log('Creating invoice:', {
-    customerId,
-    amount: `$${amount}`,
-    status,
-    date: new Date().toISOString().split('T')[0]
-  });
-  
-  // Simulate processing time
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  const amountInCents = amount * 100;
+  const date = new Date().toISOString().split('T')[0];
+
+  try {
+    await sql`
+      INSERT INTO invoices (customer_id, amount, status, date)
+      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+    `;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to create invoice.');
+  }
   
   revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices?success=true');
 }
 
-export async function updateInvoice(id: string, prevState: string | undefined, formData: FormData) {
+export async function updateInvoice(id: string, formData: FormData) {
   const validatedFields = UpdateInvoice.safeParse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
@@ -56,23 +56,35 @@ export async function updateInvoice(id: string, prevState: string | undefined, f
   });
 
   if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Update Invoice.',
-    };
+    console.error('Validation failed:', validatedFields.error.flatten().fieldErrors);
+    return;
   }
 
-  // Mock implementation for demo
-  console.log('Updating invoice:', id, validatedFields.data);
+  const { customerId, amount, status } = validatedFields.data;
+  const amountInCents = amount * 100;
+
+  try {
+    await sql`
+      UPDATE invoices
+      SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+      WHERE id = ${id}
+    `;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to update invoice.');
+  }
 
   revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 }
 
 export async function deleteInvoice(id: string) {
-  // Mock implementation for demo
-  console.log('Deleting invoice:', id);
-  
+  try {
+    await sql`DELETE FROM invoices WHERE id = ${id}`;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to delete invoice.');
+  }
+
   revalidatePath('/dashboard/invoices');
-  return { message: 'Deleted Invoice.' };
 }

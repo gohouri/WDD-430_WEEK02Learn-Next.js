@@ -11,7 +11,7 @@ CREATE TABLE invoices (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   customer_id UUID NOT NULL,
   amount INT NOT NULL,
-  status VARCHAR(255) NOT NULL,
+  status VARCHAR(50) NOT NULL,
   date DATE NOT NULL
 );
 
@@ -19,14 +19,6 @@ CREATE TABLE invoices (
 CREATE TABLE revenue (
   month VARCHAR(4) NOT NULL,
   revenue INT NOT NULL
-);
-
--- Create the users table
-CREATE TABLE users (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  password VARCHAR(255) NOT NULL
 );
 
 -- Insert sample data
@@ -43,50 +35,37 @@ INSERT INTO customers (name, email, image_url) VALUES
   ('Balazs Orban', 'balazs@orban.com', '/customers/balazs-orban.png');
 
 INSERT INTO invoices (customer_id, amount, status, date) VALUES
-  ((SELECT id FROM customers WHERE name = 'Delba de Oliveira'), 15795, 'pending', '2023-12-06'),
-  ((SELECT id FROM customers WHERE name = 'Lee Robinson'), 20348, 'pending', '2023-11-14'),
+  ((SELECT id FROM customers WHERE name = 'Delba de Oliveira'), 15795, 'pending', '2023-12-16'),
+  ((SELECT id FROM customers WHERE name = 'Lee Robinson'), 20348, 'paid', '2023-11-14'),
   ((SELECT id FROM customers WHERE name = 'Hector Simpson'), 3040, 'paid', '2023-10-29'),
   ((SELECT id FROM customers WHERE name = 'Steven Tey'), 44800, 'paid', '2023-10-04'),
   ((SELECT id FROM customers WHERE name = 'Steph Dietz'), 34577, 'pending', '2023-10-01'),
   ((SELECT id FROM customers WHERE name = 'Michael Novotny'), 54246, 'pending', '2023-09-21'),
-  ((SELECT id FROM customers WHERE name = 'Evil Rabbit'), 666, 'pending', '2023-06-27'),
-  ((SELECT id FROM customers WHERE name = 'Emil Kowalski'), 32545, 'paid', '2023-06-09'),
-  ((SELECT id FROM customers WHERE name = 'Amy Burns'), 1250, 'paid', '2023-06-07'),
-  ((SELECT id FROM customers WHERE name = 'Balazs Orban'), 8546, 'paid', '2023-06-03'),
-  ((SELECT id FROM customers WHERE name = 'Delba de Oliveira'), 5000, 'paid', '2023-08-19'),
-  ((SELECT id FROM customers WHERE name = 'Lee Robinson'), 8944, 'paid', '2023-06-18'),
-  ((SELECT id FROM customers WHERE name = 'Hector Simpson'), 5000, 'paid', '2023-06-08'),
-  ((SELECT id FROM customers WHERE name = 'Steven Tey'), 8944, 'paid', '2023-06-01'),
-  ((SELECT id FROM customers WHERE name = 'Steph Dietz'), 8944, 'paid', '2023-05-18'),
-  ((SELECT id FROM customers WHERE name = 'Michael Novotny'), 8944, 'paid', '2023-05-11'),
-  ((SELECT id FROM customers WHERE name = 'Evil Rabbit'), 8944, 'paid', '2023-05-01'),
-  ((SELECT id FROM customers WHERE name = 'Emil Kowalski'), 8944, 'paid', '2023-04-27'),
-  ((SELECT id FROM customers WHERE name = 'Amy Burns'), 8944, 'paid', '2023-04-21'),
-  ((SELECT id FROM customers WHERE name = 'Balazs Orban'), 8944, 'paid', '2023-04-15'),
-  ((SELECT id FROM customers WHERE name = 'Delba de Oliveira'), 8944, 'paid', '2023-04-01'),
-  ((SELECT id FROM customers WHERE name = 'Lee Robinson'), 8944, 'paid', '2023-03-24'),
-  ((SELECT id FROM customers WHERE name = 'Hector Simpson'), 8944, 'paid', '2023-03-16'),
-  ((SELECT id FROM customers WHERE name = 'Steven Tey'), 8944, 'paid', '2023-03-09'),
-  ((SELECT id FROM customers WHERE name = 'Steph Dietz'), 8944, 'paid', '2023-02-24'),
-  ((SELECT id FROM customers WHERE name = 'Michael Novotny'), 8944, 'paid', '2023-02-16'),
-  ((SELECT id FROM customers WHERE name = 'Evil Rabbit'), 8944, 'paid', '2023-02-09'),
-  ((SELECT id FROM customers WHERE name = 'Emil Kowalski'), 8944, 'paid', '2023-02-01'),
-  ((SELECT id FROM customers WHERE name = 'Amy Burns'), 8944, 'paid', '2023-01-27'),
-  ((SELECT id FROM customers WHERE name = 'Balazs Orban'), 8944, 'paid', '2023-01-21');
+  ((SELECT id FROM customers WHERE name = 'Evil Rabbit'), 666, 'pending', '2023-09-17'),
+  ((SELECT id FROM customers WHERE name = 'Emil Kowalski'), 32545, 'paid', '2023-09-07'),
+  ((SELECT id FROM customers WHERE name = 'Amy Burns'), 1250, 'paid', '2023-08-19'),
+  ((SELECT id FROM customers WHERE name = 'Balazs Orban'), 8945, 'paid', '2023-08-18'),
+  ((SELECT id FROM customers WHERE name = 'Delba de Oliveira'), 5000, 'paid', '2023-08-01'),
+  ((SELECT id FROM customers WHERE name = 'Lee Robinson'), 8945, 'pending', '2023-07-22'),
+  ((SELECT id FROM customers WHERE name = 'Hector Simpson'), 8945, 'paid', '2023-07-18'),
+  ((SELECT id FROM customers WHERE name = 'Steven Tey'), 8945, 'paid', '2023-07-05'),
+  ((SELECT id FROM customers WHERE name = 'Steph Dietz'), 8945, 'pending', '2023-06-29'),
+  ((SELECT id FROM customers WHERE name = 'Michael Novotny'), 8945, 'paid', '2023-06-24'),
+  ((SELECT id FROM customers WHERE name = 'Evil Rabbit'), 8945, 'paid', '2023-06-20'),
+  ((SELECT id FROM customers WHERE name = 'Emil Kowalski'), 8945, 'pending', '2023-06-17'),
+  ((SELECT id FROM customers WHERE name = 'Amy Burns'), 8945, 'paid', '2023-06-10'),
+  ((SELECT id FROM customers WHERE name = 'Balazs Orban'), 8945, 'paid', '2023-06-05');
 
 INSERT INTO revenue (month, revenue) VALUES
   ('Jan', 2000),
   ('Feb', 1800),
   ('Mar', 2200),
   ('Apr', 2500),
-  ('May', 2300),
-  ('Jun', 3200),
-  ('Jul', 3500),
-  ('Aug', 3700),
-  ('Sep', 2500),
-  ('Oct', 2800),
-  ('Nov', 3000),
+  ('May', 3200),
+  ('Jun', 3500),
+  ('Jul', 3700),
+  ('Aug', 4200),
+  ('Sep', 3800),
+  ('Oct', 4100),
+  ('Nov', 4500),
   ('Dec', 4800);
-
-INSERT INTO users (name, email, password) VALUES
-  ('Admin User', 'admin@nextjs.com', 'password123');
