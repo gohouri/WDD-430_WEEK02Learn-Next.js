@@ -1,7 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 
 // Simple in-memory storage for demo purposes
-let mockInvoices = [
+const mockInvoices = [
   { id: '1', name: 'Delba de Oliveira', email: 'delba@oliveira.com', amount: 15795, date: '2023-12-16', status: 'pending' },
   { id: '2', name: 'Lee Robinson', email: 'lee@robinson.com', amount: 20348, date: '2023-11-14', status: 'paid' },
   { id: '3', name: 'Hector Simpson', email: 'hector@simpson.com', amount: 3040, date: '2023-10-29', status: 'paid' },
@@ -9,7 +9,7 @@ let mockInvoices = [
   { id: '5', name: 'Steph Dietz', email: 'steph@dietz.com', amount: 34577, date: '2023-10-01', status: 'pending' },
 ];
 
-let mockCustomers = [
+const mockCustomers = [
   { id: '1', name: 'Delba de Oliveira', email: 'delba@oliveira.com', image_url: '/customers/delba-de-oliveira.png' },
   { id: '2', name: 'Lee Robinson', email: 'lee@robinson.com', image_url: '/customers/lee-robinson.png' },
   { id: '3', name: 'Hector Simpson', email: 'hector@simpson.com', image_url: '/customers/hector-simpson.png' },
