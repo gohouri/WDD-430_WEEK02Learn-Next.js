@@ -5,6 +5,7 @@ import Search from '@/app/ui/search';
 import { CreateInvoice } from '@/app/ui/invoices/buttons';
 import Pagination from '@/app/ui/pagination';
 import InvoicesTable from '@/app/ui/invoices/table';
+import { fetchInvoicesPages } from '@/app/lib/data';
 
 export const metadata: Metadata = {
   title: 'Invoices | Acme Dashboard',
@@ -14,11 +15,12 @@ export const metadata: Metadata = {
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: { query?: string; page?: string };
+  searchParams?: Promise<{ query?: string; page?: string }>;
 }) {
-  const query = searchParams?.query || '';
-  const currentPage = Number(searchParams?.page) || 1;
-  const totalPages = 5; // Mock total pages
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams?.query || '';
+  const currentPage = Number(resolvedSearchParams?.page) || 1;
+  const totalPages = await fetchInvoicesPages(query);
 
   return (
     <div className="w-full">

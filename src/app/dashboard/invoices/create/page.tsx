@@ -1,8 +1,10 @@
 import { lusitana } from '@/app/ui/fonts';
 import Link from 'next/link';
 import { createInvoice } from '@/app/lib/actions';
+import { fetchCustomers } from '@/app/lib/data';
 
-export default function CreateInvoicePage() {
+export default async function CreateInvoicePage() {
+  const customers = await fetchCustomers();
   return (
     <main>
       <div className="mb-6">
@@ -25,16 +27,11 @@ export default function CreateInvoicePage() {
             <option value="" disabled>
               Select a customer
             </option>
-            <option value="1">Delba de Oliveira</option>
-            <option value="2">Lee Robinson</option>
-            <option value="3">Hector Simpson</option>
-            <option value="4">Steven Tey</option>
-            <option value="5">Steph Dietz</option>
-            <option value="6">Michael Novotny</option>
-            <option value="7">Evil Rabbit</option>
-            <option value="8">Emil Kowalski</option>
-            <option value="9">Amy Burns</option>
-            <option value="10">Balazs Orban</option>
+            {customers.map((customer) => (
+              <option key={customer.id} value={customer.id}>
+                {customer.name}
+              </option>
+            ))}
           </select>
         </div>
 

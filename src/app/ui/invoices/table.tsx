@@ -1,6 +1,7 @@
 import { formatCurrency } from '@/app/lib/utils';
 import { InvoiceStatus } from '@/app/ui/invoices/status';
 import { EditButton, DeleteButton } from '@/app/ui/invoices/buttons';
+import { fetchFilteredInvoices } from '@/app/lib/data';
 
 export default async function InvoicesTable({
   query,
@@ -9,14 +10,8 @@ export default async function InvoicesTable({
   query: string;
   currentPage: number;
 }) {
-  // Mock data for demo
-  const invoices = [
-    { id: '1', name: 'Delba de Oliveira', email: 'delba@oliveira.com', amount: 15795, date: '2023-12-16', status: 'pending' },
-    { id: '2', name: 'Lee Robinson', email: 'lee@robinson.com', amount: 20348, date: '2023-11-14', status: 'paid' },
-    { id: '3', name: 'Hector Simpson', email: 'hector@simpson.com', amount: 3040, date: '2023-10-29', status: 'paid' },
-    { id: '4', name: 'Steven Tey', email: 'steven@tey.com', amount: 44800, date: '2023-10-04', status: 'paid' },
-    { id: '5', name: 'Steph Dietz', email: 'steph@dietz.com', amount: 34577, date: '2023-10-01', status: 'pending' },
-  ];
+  // Fetch dynamic data from our mock storage
+  const invoices = await fetchFilteredInvoices(query, currentPage);
 
   return (
     <div className="mt-6 flow-root">

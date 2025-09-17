@@ -4,9 +4,10 @@ import EditInvoiceForm from '@/app/ui/invoices/edit-form';
 export default async function EditInvoicePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const id = params.id;
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
   
   // Mock invoice data for demo
   const invoice = {

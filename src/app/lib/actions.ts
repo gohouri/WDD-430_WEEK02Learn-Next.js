@@ -1,9 +1,9 @@
 'use server';
 
 import { z } from 'zod';
-import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { addMockInvoice, updateMockInvoice, deleteMockInvoice } from './data';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -31,18 +31,20 @@ export async function createInvoice(formData: FormData) {
   }
 
   const { customerId, amount, status } = validatedFields.data;
-  const amountInCents = amount * 100;
   const date = new Date().toISOString().split('T')[0];
 
-  try {
-    await sql`
-      INSERT INTO invoices (customer_id, amount, status, date)
-      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-    `;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to create invoice.');
-  }
+  // Add invoice to our dynamic mock data
+  const newInvoice = addMockInvoice({
+    customerId,
+    amount,
+    status,
+    date
+  });
+
+  console.log('Mock: Created invoice:', newInvoice);
+  
+  // Simulate a small delay
+  await new Promise(resolve => setTimeout(resolve, 100));
   
   revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices?success=true');
@@ -61,30 +63,39 @@ export async function updateInvoice(id: string, formData: FormData) {
   }
 
   const { customerId, amount, status } = validatedFields.data;
-  const amountInCents = amount * 100;
 
-  try {
-    await sql`
-      UPDATE invoices
-      SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-      WHERE id = ${id}
-    `;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to update invoice.');
+  // Update invoice in our dynamic mock data
+  const updatedInvoice = updateMockInvoice(id, {
+    customerId,
+    amount,
+    status
+  });
+
+  if (updatedInvoice) {
+    console.log('Mock: Updated invoice:', updatedInvoice);
+  } else {
+    console.log('Mock: Invoice not found for update:', id);
   }
+  
+  // Simulate a small delay
+  await new Promise(resolve => setTimeout(resolve, 100));
 
   revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 }
 
 export async function deleteInvoice(id: string) {
-  try {
-    await sql`DELETE FROM invoices WHERE id = ${id}`;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to delete invoice.');
+  // Delete invoice from our dynamic mock data
+  const deleted = deleteMockInvoice(id);
+  
+  if (deleted) {
+    console.log('Mock: Deleted invoice', id);
+  } else {
+    console.log('Mock: Invoice not found for deletion:', id);
   }
+  
+  // Simulate a small delay
+  await new Promise(resolve => setTimeout(resolve, 100));
 
   revalidatePath('/dashboard/invoices');
 }

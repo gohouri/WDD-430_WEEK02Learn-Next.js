@@ -12,9 +12,10 @@ export const metadata: Metadata = {
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: { query?: string };
+  searchParams?: Promise<{ query?: string }>;
 }) {
-  const query = searchParams?.query || '';
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams?.query || '';
 
   return (
     <div className="w-full">
