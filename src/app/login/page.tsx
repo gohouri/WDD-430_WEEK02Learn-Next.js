@@ -1,18 +1,7 @@
 import { lusitana } from '@/app/ui/fonts';
-import { redirect } from 'next/navigation';
-
-async function handleLogin(formData: FormData) {
-  'use server';
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  
-  if (email === 'admin@nextjs.com' && password === 'password123') {
-    redirect('/dashboard');
-  }
-}
+import { authenticate } from '@/app/lib/actions';
 
 export default function LoginPage() {
-
   return (
     <main className="flex items-center justify-center md:h-screen">
       <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
@@ -24,7 +13,7 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
-        <form action={handleLogin} className="space-y-3">
+        <form action={authenticate} className="space-y-3">
           <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
             <h1 className={`${lusitana.className} mb-3 text-2xl`}>
               Please log in to continue.

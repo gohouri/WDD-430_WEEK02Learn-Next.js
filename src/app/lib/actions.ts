@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { addMockInvoice, updateMockInvoice, deleteMockInvoice } from './data';
 
 const FormSchema = z.object({
@@ -98,4 +99,28 @@ export async function deleteInvoice(id: string) {
   await new Promise(resolve => setTimeout(resolve, 100));
 
   revalidatePath('/dashboard/invoices');
+}
+
+export async function authenticate(formData: FormData) {
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+
+  // Simple authentication check
+  if (email === 'admin@nextjs.com' && password === 'password123') {
+    // Set authentication cookie
+    const cookieStore = await cookies();
+    cookieStore.set('isAuthenticated', 'true', {
+      path: '/',
+      maxAge: 86400, // 24 hours
+      httpOnly: false, // Allow client-side access
+      secure: false, // For development
+      sameSite: 'lax'
+    });
+    
+    console.log('Authentication successful, redirecting to dashboard');
+    redirect('/dashboard');
+  } else {
+    console.log('Authentication failed, redirecting to login');
+    redirect('/login?error=Invalid credentials');
+  }
 }

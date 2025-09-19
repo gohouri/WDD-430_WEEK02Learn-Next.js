@@ -1,4 +1,6 @@
 import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { lusitana } from '@/app/ui/fonts';
 import { Metadata } from 'next';
 import Search from '@/app/ui/search';
@@ -17,6 +19,14 @@ export default async function Page({
 }: {
   searchParams?: Promise<{ query?: string; page?: string }>;
 }) {
+  // Check authentication server-side
+  const cookieStore = await cookies();
+  const isAuthenticated = cookieStore.get('isAuthenticated')?.value === 'true';
+  
+  if (!isAuthenticated) {
+    redirect('/login');
+  }
+
   const resolvedSearchParams = await searchParams;
   const query = resolvedSearchParams?.query || '';
   const currentPage = Number(resolvedSearchParams?.page) || 1;

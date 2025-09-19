@@ -1,4 +1,6 @@
 import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import Card from '@/app/ui/dashboard/cards';
 import RevenueChart from '@/app/ui/dashboard/revenue-chart';
 import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
@@ -12,6 +14,19 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
+  // Check authentication server-side
+  const cookieStore = await cookies();
+  const authCookie = cookieStore.get('isAuthenticated');
+  const isAuthenticated = authCookie?.value === 'true';
+  
+  console.log('Auth check - Cookie:', authCookie);
+  console.log('Auth check - Is authenticated:', isAuthenticated);
+  
+  if (!isAuthenticated) {
+    console.log('Redirecting to login...');
+    redirect('/login');
+  }
+
   // Mock data for demo
   const numberOfInvoices = 12;
   const numberOfCustomers = 8;
